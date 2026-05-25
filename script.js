@@ -7,6 +7,7 @@ const ticketEmail = document.getElementById('ticketEmail');
 const ticketType = document.getElementById('ticketType');
 const ticketQuantity = document.getElementById('ticketQuantity');
 const ticketId = document.getElementById('ticketId');
+const ticketQrCode = document.getElementById('ticketQrCode');
 const confirmationMessage = document.getElementById('confirmationMessage');
 
 const createTicketId = () => {
@@ -29,12 +30,19 @@ const downloadTextFile = (filename, content) => {
   element.remove();
 };
 
+const createQrCodeUrl = (ticket) => {
+  const contents = `Ticket ID: ${ticket.id}\nName: ${ticket.fullName}\nEmail: ${ticket.email}\nEvent: Milacle Tech Hackathon`;
+  return `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(contents)}`;
+};
+
 const showConfirmation = (data) => {
   ticketName.textContent = data.fullName;
   ticketEmail.textContent = data.email;
   ticketType.textContent = data.ticketType;
   ticketQuantity.textContent = data.quantity;
   ticketId.textContent = data.id;
+  ticketQrCode.src = createQrCodeUrl(data);
+  ticketQrCode.alt = `QR code for ticket ${data.id}`;
   confirmationMessage.textContent = `Your ticket has been sent to ${data.email}. Please keep this confirmation for event access.`;
   confirmation.classList.remove('hidden');
 };
