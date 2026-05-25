@@ -1,0 +1,84 @@
+const form = document.getElementById('registrationForm');
+const confirmation = document.getElementById('confirmation');
+const downloadButton = document.getElementById('downloadTicket');
+
+const ticketName = document.getElementById('ticketName');
+const ticketEmail = document.getElementById('ticketEmail');
+const ticketType = document.getElementById('ticketType');
+const ticketQuantity = document.getElementById('ticketQuantity');
+const ticketId = document.getElementById('ticketId');
+const confirmationMessage = document.getElementById('confirmationMessage');
+
+const createTicketId = () => {
+  const now = Date.now().toString(36).toUpperCase();
+  const random = Math.floor(Math.random() * 9000 + 1000);
+  return `MIL-${now}-${random}`;
+};
+
+const createTicketFile = ({ name, email, type, quantity, id }) => {
+  return `Milacle Tech Hackathon Ticket\n\nName: ${name}\nEmail: ${email}\nTicket type: ${type}\nQuantity: ${quantity}\nTicket ID: ${id}\nDate: June 12, 2026\nTime: 10:00 AM – 5:00 PM\nLocation: Online / Hybrid access\n\nThank you for registering! Please keep this ticket for event access.`;
+};
+
+const downloadTextFile = (filename, content) => {
+  const element = document.createElement('a');
+  const file = new Blob([content], { type: 'text/plain' });
+  element.href = URL.createObjectURL(file);
+  element.download = filename;
+  document.body.appendChild(element);
+  element.click();
+  element.remove();
+};
+
+const showConfirmation = (data) => {
+  ticketName.textContent = data.fullName;
+  ticketEmail.textContent = data.email;
+  ticketType.textContent = data.ticketType;
+  ticketQuantity.textContent = data.quantity;
+  ticketId.textContent = data.id;
+  confirmationMessage.textContent = `Your ticket has been sent to ${data.email}. Please keep this confirmation for event access.`;
+  confirmation.classList.remove('hidden');
+};
+
+const getFormData = () => ({
+  fullName: form.fullName.value.trim(),
+  email: form.email.value.trim(),
+  ticketType: form.ticketType.value,
+  quantity: form.quantity.value,
+});
+
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const data = getFormData();
+
+  if (!data.fullName || !data.email) {
+    alert('Please enter your name and email to register.');
+    return;
+  }
+
+  const ticket = {
+    ...data,
+    id: createTicketId(),
+  };
+
+  showConfirmation(ticket);
+  localStorage.setItem('milacleRegistration', JSON.stringify(ticket));
+});
+
+downloadButton.addEventListener('click', () => {
+  const saved = localStorage.getItem('milacleRegistration');
+  if (!saved) {
+    alert('Please register first to download your ticket.');
+    return;
+  }
+  const ticket = JSON.parse(saved);
+  const content = createTicketFile(ticket);
+  downloadTextFile(`Milacle-ticket-${ticket.id}.txt`, content);
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('milacleRegistration');
+  if (saved) {
+    const ticket = JSON.parse(saved);
+    showConfirmation(ticket);
+  }
+});
