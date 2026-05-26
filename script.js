@@ -36,7 +36,7 @@ const createQrCodeUrl = (ticket) => {
   return `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(contents)}`;
 };
 
-const showConfirmation = (data) => {
+const showConfirmation = (data, fallback = false) => {
   ticketName.textContent = data.fullName;
   ticketEmail.textContent = data.email || 'Not provided';
   ticketPhone.textContent = data.phone || 'Not provided';
@@ -45,7 +45,9 @@ const showConfirmation = (data) => {
   ticketId.textContent = data.id;
   ticketQrCode.src = createQrCodeUrl(data);
   ticketQrCode.alt = `QR code for ticket ${data.id}`;
-  confirmationMessage.textContent = `A confirmation email with your ticket PDF has been sent to ${data.email}. Please keep this confirmation for event access.`;
+  confirmationMessage.textContent = fallback
+    ? `We could not send the email automatically, so your mail client has been opened to send the ticket confirmation to ${data.email}. Please keep this confirmation for event access.`
+    : `A confirmation email with your ticket PDF has been sent to ${data.email}. Please keep this confirmation for event access.`;
   confirmation.classList.remove('hidden');
 };
 
@@ -74,6 +76,11 @@ const sendConfirmationEmail = async (ticket) => {
   return response.json();
 };
 
+const openMailClient = (ticket) => {
+  const body = encodeURIComponent(`Hello ${ticket.fullName},\n\nThank you for registering for the Milacle Tech Hackathon.\n\nTicket ID: ${ticket.id}\nTicket type: ${ticket.ticketType}\nQuantity: ${ticket.quantity}\nDate: June 12, 2026\nTime: 10:00 AM – 5:00 PM\nLocation: Online / Hybrid access\n\nPlease keep this email for event access.`);
+  window.location.href = `mailto:${ticket.email}?subject=${encodeURIComponent('Milacle Hackathon Ticket Confirmation')}&body=${body}`;
+};
+
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   const data = getFormData();
@@ -88,14 +95,17 @@ form.addEventListener('submit', async (event) => {
     id: createTicketId(),
   };
 
+  let fallback = false;
   try {
     await sendConfirmationEmail(ticket);
-    showConfirmation(ticket);
-    localStorage.setItem('milacleRegistration', JSON.stringify(ticket));
   } catch (error) {
-    console.error(error);
-    alert('Confirmation email could not be sent. Please check server settings and try again.');
+    console.warn('Backend email API unavailable, opening the email client instead.', error);
+    openMailClient(ticket);
+    fallback = true;
   }
+
+  showConfirmation(ticket, fallback);
+  localStorage.setItem('milacleRegistration', JSON.stringify(ticket));
 });
 
 downloadButton.addEventListener('click', () => {

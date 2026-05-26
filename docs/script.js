@@ -36,7 +36,7 @@ const createQrCodeUrl = (ticket) => {
   return `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(contents)}`;
 };
 
-const showConfirmation = (data) => {
+const showConfirmation = (data, fallback = false) => {
   ticketName.textContent = data.fullName;
   ticketEmail.textContent = data.email || 'Not provided';
   ticketPhone.textContent = data.phone || 'Not provided';
@@ -45,7 +45,9 @@ const showConfirmation = (data) => {
   ticketId.textContent = data.id;
   ticketQrCode.src = createQrCodeUrl(data);
   ticketQrCode.alt = `QR code for ticket ${data.id}`;
-  confirmationMessage.textContent = `A confirmation email with your ticket PDF has been sent to ${data.email}. Please keep this confirmation for event access.`;
+  confirmationMessage.textContent = fallback
+    ? `Automatic email delivery was unavailable, so your mail client has been opened to send the ticket confirmation to ${data.email}. Please keep this confirmation for event access.`
+    : `A confirmation email with your ticket PDF has been sent to ${data.email}. Please keep this confirmation for event access.`;
   confirmation.classList.remove('hidden');
 };
 
@@ -93,14 +95,16 @@ form.addEventListener('submit', async (event) => {
     id: createTicketId(),
   };
 
+  let fallback = false;
   try {
     await sendConfirmationEmail(ticket);
   } catch (error) {
     console.warn('Backend email API unavailable, opening the email client instead.', error);
     openMailClient(ticket);
+    fallback = true;
   }
 
-  showConfirmation(ticket);
+  showConfirmation(ticket, fallback);
   localStorage.setItem('milacleRegistration', JSON.stringify(ticket));
 });
 
