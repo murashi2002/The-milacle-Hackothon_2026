@@ -1,0 +1,16 @@
+{
+  "name": "the-milacle-hackathon-2026",
+  "version": "1.0.0",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "nodemailer": "^6.9.5",
+    "pdfkit": "^0.14.0",
+    "qrcode": "^1.5.1"
+  }
+}

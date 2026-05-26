@@ -45,9 +45,7 @@ const showConfirmation = (data) => {
   ticketId.textContent = data.id;
   ticketQrCode.src = createQrCodeUrl(data);
   ticketQrCode.alt = `QR code for ticket ${data.id}`;
-  confirmationMessage.textContent = data.email
-    ? `A confirmation email has been prepared for ${data.email}. Please keep this confirmation for event access.`
-    : `A confirmation SMS has been prepared for ${data.phone}. Please keep this confirmation for event access.`;
+  confirmationMessage.textContent = `A confirmation email with your ticket PDF has been sent to ${data.email}. Please keep this confirmation for event access.`;
   confirmation.classList.remove('hidden');
 };
 
@@ -59,25 +57,29 @@ const getFormData = () => ({
   quantity: form.quantity.value,
 });
 
-const formatConfirmationBody = (ticket) => {
-  return `Hello ${ticket.fullName},\n\nThank you for registering for the Milacle Tech Hackathon.\n\nTicket ID: ${ticket.id}\nTicket type: ${ticket.ticketType}\nQuantity: ${ticket.quantity}\nDate: June 12, 2026\nTime: 10:00 AM – 5:00 PM\nLocation: Online / Hybrid access\n\nWe look forward to seeing you at the event!`;
-};
+const sendConfirmationEmail = async (ticket) => {
+  const response = await fetch('/api/send-confirmation', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(ticket),
+  });
 
-const sendContactConfirmation = (ticket) => {
-  const body = encodeURIComponent(formatConfirmationBody(ticket));
-  if (ticket.email) {
-    window.location.href = `mailto:${ticket.email}?subject=${encodeURIComponent('Milacle Hackathon Registration Confirmation')}&body=${body}`;
-  } else if (ticket.phone) {
-    window.location.href = `sms:${ticket.phone}?body=${body}`;
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to send confirmation email.');
   }
+
+  return response.json();
 };
 
-form.addEventListener('submit', (event) => {
+form.addEventListener('submit', async (event) => {
   event.preventDefault();
   const data = getFormData();
 
-  if (!data.fullName || (!data.email && !data.phone)) {
-    alert('Please enter your name and provide either an email address or phone number to register.');
+  if (!data.fullName || !data.email) {
+    alert('Please enter your name and an email address to register.');
     return;
   }
 
@@ -86,9 +88,14 @@ form.addEventListener('submit', (event) => {
     id: createTicketId(),
   };
 
-  showConfirmation(ticket);
-  localStorage.setItem('milacleRegistration', JSON.stringify(ticket));
-  sendContactConfirmation(ticket);
+  try {
+    await sendConfirmationEmail(ticket);
+    showConfirmation(ticket);
+    localStorage.setItem('milacleRegistration', JSON.stringify(ticket));
+  } catch (error) {
+    console.error(error);
+    alert('Confirmation email could not be sent. Please check server settings and try again.');
+  }
 });
 
 downloadButton.addEventListener('click', () => {
