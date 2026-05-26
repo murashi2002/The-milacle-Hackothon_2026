@@ -121,6 +121,11 @@ body {
   color: #0f172a;
 }
 
+.field-note {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
 .primary-button,
 .secondary-button {
   border: none;
