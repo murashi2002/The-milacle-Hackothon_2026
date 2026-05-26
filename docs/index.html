@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Milacle Event Registration</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <main class="page">
+    <section class="header">
+      <p class="eyebrow">Event registration is live</p>
+      <h1>Milacle Tech Hackathon</h1>
+      <p>Register for the event, get your digital ticket instantly, and join us for a day of innovation, networking, and prizes.</p>
+    </section>
+
+    <section class="event-summary card-grid">
+      <article class="card event-card">
+        <h2>Event details</h2>
+        <p>Date: June 12, 2026</p>
+        <p>Time: 10:00 AM – 5:00 PM</p>
+        <p>Venue: Online / Hybrid access</p>
+        <p>Join live sessions, team challenges, and career-building workshops.</p>
+      </article>
+      <article class="card event-card">
+        <h2>What you get</h2>
+        <ul>
+          <li>Event access pass</li>
+          <li>Digital ticket delivered instantly</li>
+          <li>Community networking</li>
+          <li>Certificate of participation</li>
+        </ul>
+      </article>
+      <article class="card event-card">
+        <h2>Ticket packages</h2>
+        <ul>
+          <li><strong>General Admission</strong> — standard access to all sessions, networking, and workshops.</li>
+          <li><strong>VIP Pass</strong> — premium access, exclusive goodies, priority support, and event souvenirs.</li>
+          <li><strong>Student Pass</strong> — discounted access for students, including all sessions and student workshops.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="card sponsors-card">
+      <h2>Support from sponsors</h2>
+      <p>Our sponsors can help make this event better by supporting:</p>
+      <ul>
+        <li>Financial prizes and awards</li>
+        <li>Venue and streaming resources</li>
+        <li>Technical equipment and supplies</li>
+        <li>Marketing, outreach, and guest speakers</li>
+      </ul>
+      <p>If you are a sponsor, please contact us at <a href="mailto:rwabiggwi@gmail.com">rwabiggwi@gmail.com</a> or call <strong>0780274292</strong> to get featured and help our participants succeed.</p>
+    </section>
+
+    <section class="register-card card">
+      <h2>Register now</h2>
+      <form id="registrationForm">
+        <div class="form-group">
+          <label for="fullName">Full name</label>
+          <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" placeholder="name@example.com" required />
+          <small class="field-note">Email is required to receive your PDF ticket confirmation.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone number</label>
+          <input type="tel" id="phone" name="phone" placeholder="+250 7XXXXXXXX" />
+          <small class="field-note">Phone is optional and can be used for SMS confirmation when email is not provided.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="ticketType">Ticket package</label>
+          <select id="ticketType" name="ticketType" required>
+            <option value="General Admission">General Admission - Standard access to all sessions</option>
+            <option value="VIP Pass">VIP Pass - Premium access, gifts, and priority support</option>
+            <option value="Student Pass">Student Pass - Discounted access for students</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="quantity">Quantity</label>
+          <input type="number" id="quantity" name="quantity" min="1" max="5" value="1" required />
+        </div>
+
+        <button type="submit" class="primary-button">Send registration</button>
+      </form>
+    </section>
+
+    <section id="confirmation" class="ticket-card card hidden">
+      <div class="success-banner">Registration confirmed</div>
+      <h2>Your digital ticket</h2>
+      <p id="confirmationMessage">Ticket has been sent to your registered email.</p>
+      <div class="ticket-details">
+        <p><strong>Name:</strong> <span id="ticketName"></span></p>
+        <p><strong>Email:</strong> <span id="ticketEmail"></span></p>
+        <p><strong>Phone:</strong> <span id="ticketPhone"></span></p>
+        <p><strong>Ticket type:</strong> <span id="ticketTypeText"></span></p>
+        <p><strong>Quantity:</strong> <span id="ticketQuantity"></span></p>
+        <p><strong>Event date:</strong> June 12, 2026</p>
+        <p><strong>Ticket ID:</strong> <span id="ticketId"></span></p>
+      </div>
+      <div class="qr-section">
+        <h3>Ticket QR code</h3>
+        <img id="ticketQrCode" src="" alt="Ticket QR code" />
+      </div>
+      <button id="downloadTicket" class="secondary-button">Download Ticket</button>
+    </section>
+
+    <section class="footer card">
+      <p>Published at: <a href="https://murashi2002.github.io/The-milacle-Hackothon_2026/" target="_blank">https://murashi2002.github.io/The-milacle-Hackothon_2026/</a></p>
+      <p>This event page is published and ready for your guests. Share the link above so attendees and sponsors can register.</p>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
